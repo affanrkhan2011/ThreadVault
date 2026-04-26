@@ -47,46 +47,23 @@ export function ScanItem() {
     if (!imageSrc) return;
     setIsProcessing(true);
     try {
-      const apiKey = process.env.GROQ_API_KEY;
-      if (!apiKey) {
-        throw new Error("API Key is missing. Please configure GROQ_API_KEY in the Secrets panel.");
-      }
-      const payload = {
-        model: "llama-3.2-11b-vision-preview",
-        messages: [
-          {
-            role: "user",
-            content: [
-              {
-                type: "text",
-                text: "Analyze this clothing item and return a structured JSON object with the following keys EXACTLY: garment_type, colour, pattern, fabric, brand, fit, season (array of strings), occasion (array of strings), style, care. No other text, just JSON."
-              },
-              {
-                type: "image_url",
-                image_url: {
-                  url: imageSrc
-                }
-              }
-            ]
-          }
-        ],
-        response_format: { type: "json_object" }
-      };
-
-      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      const res = await fetch("/api/analyze-image", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ 
+          imageSrc, 
+          model: "llama-3.2-11b-vision-preview" 
+        })
       });
       
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error?.message || "Failed to analyze image");
+      if (!res.ok) throw new Error(data.error?.message || data.error || "Failed to analyze image");
       
       let parsed: AIResponse;
       try {
+         // The server returns the full data from Groq, so we need to access choices[0].message.content
          parsed = JSON.parse(data.choices[0].message.content);
       } catch (e) {
          throw new Error("Invalid output from AI");
