@@ -1,0 +1,8 @@
+{
+  "name": "ThreadVault",
+  "description": "Your digital wardrobe and AI personal stylist. Scan clothes, build outfits, and analyze your wardrobe.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": []
+}

@@ -1,0 +1,78 @@
+{
+  "entities": {
+    "Item": {
+      "title": "Item",
+      "description": "A piece of clothing in the vault",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "photoUrl": { "type": "string" },
+        "garmentType": { "type": "string" },
+        "color": { "type": "string" },
+        "pattern": { "type": "string" },
+        "fabric": { "type": "string" },
+        "brand": { "type": "string" },
+        "fit": { "type": "string" },
+        "season": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "occasion": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "style": { "type": "string" },
+        "status": { "type": "string", "enum": ["Clean", "In Laundry", "Dry Cleaner"] },
+        "notes": { "type": "string" },
+        "timesWorn": { "type": "number" },
+        "lastWorn": { "type": "string", "format": "date-time" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "photoUrl", "garmentType", "color", "timesWorn", "status"]
+    },
+    "Look": {
+      "title": "Look",
+      "description": "A saved outfit combination",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "itemIds": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "occasion": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "name", "itemIds"]
+    },
+    "WearLog": {
+      "title": "WearLog",
+      "description": "Log of an item or look being worn",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "targetId": { "type": "string" },
+        "targetType": { "type": "string", "enum": ["items", "looks"] },
+        "date": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "targetId", "targetType", "date"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/items/{itemId}": {
+      "schema": { "$ref": "#/entities/Item" },
+      "description": "Items in a user's vault"
+    },
+    "/users/{userId}/looks/{lookId}": {
+      "schema": { "$ref": "#/entities/Look" },
+      "description": "Saved outfit looks for a user"
+    },
+    "/users/{userId}/wearLogs/{wearLogId}": {
+      "schema": { "$ref": "#/entities/WearLog" },
+      "description": "Log entries of worn clothing or looks for a user"
+    }
+  }
+}
